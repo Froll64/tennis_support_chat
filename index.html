@@ -6,18 +6,17 @@
     <title>Time Life | Tennis</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Фирменные цвета Time Life */
+        /* === ФИРМЕННЫЕ ЦВЕТА === */
         :root {
-            --tl-bg: #FCF9F2; /* Бежевый фон */
-            --tl-dark: #0B2545; /* Темно-синий (текст и лого) */
-            --tl-orange: #F05A22; /* Оранжевый (кнопки) */
-            --tl-white: #FFFFFF; /* Белый (карточки) */
-            --tl-gray: #8892A0; /* Серый для подсказок */
+            --tl-dark: #0B2545;       
+            --tl-orange: #F05A22;     
+            --tl-white: #FFFFFF;      
+            --tl-gray: #6b7c93;       
         }
 
+        /* === АНИМИРОВАННЫЙ ФОН === */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tl-bg);
             color: var(--tl-dark);
             margin: 0;
             padding: 20px 15px;
@@ -25,170 +24,336 @@
             flex-direction: column;
             min-height: 100vh;
             box-sizing: border-box;
+            background: linear-gradient(-45deg, #FCF9F2, #e8dfd3, #fff3e0, #fce4d6);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
+        /* Плавающий теннисный мяч на фоне */
+        .bg-ball {
+            position: fixed;
+            font-size: 120px;
+            opacity: 0.1;
+            top: 10%;
+            right: -20px;
+            z-index: -1;
+            animation: float 6s ease-in-out infinite;
+        }
+        .bg-ball-2 {
+            position: fixed;
+            font-size: 80px;
+            opacity: 0.05;
+            bottom: 5%;
+            left: -10px;
+            z-index: -1;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(15deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        /* === ШАПКА === */
+        .header { 
+            text-align: center; 
+            margin-bottom: 25px; 
+            animation: fadeInDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); 
+        }
         h2 { 
             margin-bottom: 5px; 
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--tl-dark);
-            letter-spacing: 0.5px;
+            font-size: 28px; 
+            font-weight: 900; 
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(255,255,255,0.8);
         }
-
         p.subtitle { 
             text-align: center; 
             color: var(--tl-gray); 
-            font-size: 14px; 
+            font-size: 15px; 
             margin-top: 0; 
-            margin-bottom: 0;
-            line-height: 1.4;
+            font-weight: 500;
         }
 
+        /* === ЭФФЕКТ МАТОВОГО СТЕКЛА (GLASSMORPHISM) === */
         .card {
-            background-color: var(--tl-white);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(11, 37, 69, 0.05);
-            border: 1px solid rgba(11, 37, 69, 0.03);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 32px rgba(11, 37, 69, 0.08);
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+            transition: transform 0.3s ease;
         }
+        .card:focus-within {
+            transform: translateY(-2px);
+            border-color: rgba(240, 90, 34, 0.3);
+        }
+
+        .card:nth-child(3) { animation-delay: 0.1s; }
+        .card:nth-child(4) { animation-delay: 0.2s; }
 
         label { 
-            font-weight: 700; 
-            font-size: 14px; 
+            font-weight: 800; 
+            font-size: 15px; 
             display: block; 
-            margin-bottom: 10px; 
-            color: var(--tl-dark);
+            margin-bottom: 12px; 
         }
 
-        input, select {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 2px solid #EAE3D9;
-            font-size: 16px;
-            box-sizing: border-box;
-            background-color: var(--tl-bg);
+        /* === КРАСИВЫЕ ИНПУТЫ === */
+        input[type="text"] {
+            width: 100%; 
+            padding: 16px; 
+            border-radius: 14px; 
+            border: 2px solid rgba(11, 37, 69, 0.1);
+            font-size: 16px; 
+            font-weight: 600; 
+            background: rgba(255, 255, 255, 0.9); 
             color: var(--tl-dark);
-            font-weight: 600;
-            outline: none;
-            transition: border-color 0.2s ease;
+            outline: none; 
+            transition: all 0.3s ease; 
+            box-sizing: border-box; 
             -webkit-appearance: none;
         }
+        input[type="text"]:focus { 
+            border-color: var(--tl-orange); 
+            box-shadow: 0 0 15px rgba(240, 90, 34, 0.2);
+            background: #fff;
+        }
+        input::placeholder { color: #a0aab8; font-weight: 500; }
 
-        input:focus, select:focus {
-            border-color: var(--tl-orange);
+        /* === КНОПКИ-ПОДСКАЗКИ (ЧИПСЫ) === */
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .chip {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(11, 37, 69, 0.1);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--tl-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chip:active {
+            background: var(--tl-orange);
+            color: white;
+            transform: scale(0.95);
         }
 
-        button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
+        /* === ГЛАВНЫЕ КНОПКИ === */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+            animation-delay: 0.3s;
+        }
+
+        .main-btn {
+            flex: 1;
+            padding: 18px; 
+            border-radius: 16px; 
             border: none;
-            background-color: var(--tl-orange);
-            color: var(--tl-white);
-            font-size: 16px;
+            background: linear-gradient(135deg, #F05A22 0%, #FF7B45 100%);
+            color: var(--tl-white); 
+            font-size: 17px; 
+            font-weight: 900; 
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(240, 90, 34, 0.4);
+            transition: transform 0.1s;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Пульсирующее свечение для главной кнопки */
+        .main-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            100% { left: 200%; }
+        }
+        .main-btn:active { transform: scale(0.96); }
+
+        .reset-btn {
+            padding: 18px;
+            border-radius: 16px;
+            border: 2px solid rgba(11, 37, 69, 0.2);
+            background: transparent;
+            color: var(--tl-dark);
+            font-size: 17px;
             font-weight: 800;
             cursor: pointer;
-            margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(240, 90, 34, 0.3);
-            transition: transform 0.1s ease, opacity 0.2s ease;
+            transition: all 0.2s;
         }
+        .reset-btn:active { background: rgba(11, 37, 69, 0.1); }
 
-        button:active { 
-            transform: scale(0.98);
-            opacity: 0.9; 
-        }
-
+        /* === БЛОК РЕЗУЛЬТАТА === */
         #result {
-            display: none;
-            margin-top: 20px;
-            background-color: var(--tl-white);
-            padding: 20px;
-            border-radius: 16px;
-            white-space: pre-wrap;
-            line-height: 1.6;
+            display: none; 
+            margin-top: 20px; 
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 22px; 
+            border-radius: 20px; 
+            line-height: 1.7; 
             font-size: 15px;
-            box-shadow: 0 4px 12px rgba(11, 37, 69, 0.05);
-            border-left: 5px solid var(--tl-orange); /* Оранжевый акцент */
-            color: var(--tl-dark);
-            animation: fadeIn 0.4s ease;
+            box-shadow: 0 10px 30px rgba(11, 37, 69, 0.1);
+            border-left: 6px solid var(--tl-orange); 
+            animation: fadeIn 0.6s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .loader {
+            border: 4px solid rgba(240, 90, 34, 0.2); 
+            border-top: 4px solid var(--tl-orange);
+            border-radius: 50%; width: 40px; height: 40px; 
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
 
-        /* Стили для выделения текста в плане */
-        b { color: var(--tl-dark); }
-        
+        /* === АНИМАЦИИ ПОЯВЛЕНИЯ === */
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
+    <!-- Фоновые декорации -->
+    <div class="bg-ball">🎾</div>
+    <div class="bg-ball-2">🎾</div>
+
     <div class="header">
         <h2>🎾 TIME LIFE</h2>
-        <p class="subtitle">Ваш персональный помощник для организации занятий</p>
+        <p class="subtitle">Твой персональный помощник</p>
     </div>
 
     <div class="card">
-        <label>Сколько у Вас свободного времени? (в минутах)</label>
-        <input type="number" id="timeInput" placeholder="Например: 60" min="15" max="180">
+        <label>Сколько у Вас времени?</label>
+        <input type="text" id="timeInput" placeholder="Например: 1 час или 45 мин...">
+        <div class="chips-container">
+            <div class="chip" onclick="fillTime('30 мин')">30 мин</div>
+            <div class="chip" onclick="fillTime('45 мин')">45 мин</div>
+            <div class="chip" onclick="fillTime('1 час')">1 час</div>
+            <div class="chip" onclick="fillTime('1.5 часа')">1.5 часа</div>
+        </div>
     </div>
 
     <div class="card">
         <label>На каком уроке Вы остановились?</label>
-        <select id="lessonSelect">
-            <option value="Накат слева">Накат слева</option>
-            <option value="Накат справа">Накат справа</option>
-            <option value="Подрезка">Подрезка</option>
-            <option value="Топ-спин. Часть 1">Топ-спин. Часть 1</option>
-            <option value="Топ-спин. Часть 2">Топ-спин. Часть 2</option>
-        </select>
+        <input type="text" id="lessonInput" placeholder="Например: Накат слева...">
+        <div class="chips-container">
+            <div class="chip" onclick="fillLesson('Накат слева')">Накат слева</div>
+            <div class="chip" onclick="fillLesson('Накат справа')">Накат справа</div>
+            <div class="chip" onclick="fillLesson('Подрезка')">Подрезка</div>
+            <div class="chip" onclick="fillLesson('Топ-спин')">Топ-спин</div>
+        </div>
     </div>
 
-    <button onclick="generatePlan()">Составить план занятия</button>
+    <div class="btn-group">
+        <button class="reset-btn" onclick="resetApp()">✕</button>
+        <button class="main-btn" onclick="generatePlan()">Составить план 🚀</button>
+    </div>
 
     <div id="result"></div>
 
     <script>
-        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем на весь экран
-
-        // Устанавливаем цвет шапки телеграма под наш фон
+        tg.expand();
         tg.setHeaderColor('#FCF9F2');
         tg.setBackgroundColor('#FCF9F2');
 
+        // Функции для заполнения полей при клике на подсказки
+        function fillTime(text) {
+            document.getElementById('timeInput').value = text;
+            if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
+        function fillLesson(text) {
+            document.getElementById('lessonInput').value = text;
+            if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
+        function resetApp() {
+            document.getElementById('timeInput').value = '';
+            document.getElementById('lessonInput').value = '';
+            document.getElementById('result').style.display = 'none';
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        // Умный парсинг времени из текста (например, "1 час" -> 60, "полчаса" -> 30)
+        function parseTime(text) {
+            text = text.toLowerCase();
+            if (text.includes('полчаса')) return 30;
+            if (text.includes('полтора') || text.includes('1.5')) return 90;
+            
+            const matchMin = text.match(/(\d+)\s*(?:мин|минут)/);
+            if (matchMin) return parseInt(matchMin[1]);
+            
+            const matchHour = text.match(/(\d+(?:\.\d+)?)\s*(?:час|ч)/);
+            if (matchHour) return parseInt(parseFloat(matchHour[1]) * 60);
+
+            // Если просто ввели число
+            const justNumber = text.match(/^(\d+)$/);
+            if (justNumber) return parseInt(justNumber[1]);
+
+            return 60; // По умолчанию
+        }
+
         function generatePlan() {
-            const time = parseInt(document.getElementById('timeInput').value);
-            const lesson = document.getElementById('lessonSelect').value;
+            const timeText = document.getElementById('timeInput').value.trim();
+            const lessonText = document.getElementById('lessonInput').value.trim();
             const resultDiv = document.getElementById('result');
 
-            if (!time || time < 15) {
-                tg.showAlert("Пожалуйста, укажите время (минимум 15 минут).");
+            if (!timeText || !lessonText) {
+                tg.showAlert("Пожалуйста, заполните оба поля!");
+                return;
+            }
+
+            const time = parseTime(timeText);
+            if (time < 15) {
+                tg.showAlert("Минимальное время тренировки — 15 минут.");
                 return;
             }
 
             resultDiv.style.display = 'block';
-            resultDiv.innerHTML = "⏳ <i>Менеджер готовит Ваш план...</i>";
+            resultDiv.innerHTML = "<div class='loader'></div><div style='text-align:center; font-weight:700; color:var(--tl-orange);'>Менеджер подбирает план...</div>";
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            
+            // Плавный скролл вниз к результату
+            setTimeout(() => { resultDiv.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 100);
 
-            // Отправляем данные в Cloudflare Worker для генерации
             fetch('https://tennis-support-chat.andrewfrolov052.workers.dev/webapp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ time: time, lesson: lesson })
+                body: JSON.stringify({ time: time, lesson: lessonText })
             })
             .then(res => res.json())
             .then(data => {
-                resultDiv.innerHTML = data.plan;
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                setTimeout(() => {
+                    resultDiv.innerHTML = data.plan;
+                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                }, 800); // Небольшая задержка для красоты анимации
             })
             .catch(err => {
                 resultDiv.innerHTML = "❌ Ошибка соединения. Попробуйте позже.";
