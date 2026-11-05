@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Time Life | Tennis</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Фирменные цвета Time Life */
+        :root {
+            --tl-bg: #FCF9F2; /* Бежевый фон */
+            --tl-dark: #0B2545; /* Темно-синий (текст и лого) */
+            --tl-orange: #F05A22; /* Оранжевый (кнопки) */
+            --tl-white: #FFFFFF; /* Белый (карточки) */
+            --tl-gray: #8892A0; /* Серый для подсказок */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tl-bg);
+            color: var(--tl-dark);
+            margin: 0;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h2 { 
+            margin-bottom: 5px; 
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--tl-dark);
+            letter-spacing: 0.5px;
+        }
+
+        p.subtitle { 
+            text-align: center; 
+            color: var(--tl-gray); 
+            font-size: 14px; 
+            margin-top: 0; 
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        .card {
+            background-color: var(--tl-white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(11, 37, 69, 0.05);
+            border: 1px solid rgba(11, 37, 69, 0.03);
+        }
+
+        label { 
+            font-weight: 700; 
+            font-size: 14px; 
+            display: block; 
+            margin-bottom: 10px; 
+            color: var(--tl-dark);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 2px solid #EAE3D9;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: var(--tl-bg);
+            color: var(--tl-dark);
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s ease;
+            -webkit-appearance: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--tl-orange);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background-color: var(--tl-orange);
+            color: var(--tl-white);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(240, 90, 34, 0.3);
+            transition: transform 0.1s ease, opacity 0.2s ease;
+        }
+
+        button:active { 
+            transform: scale(0.98);
+            opacity: 0.9; 
+        }
+
+        #result {
+            display: none;
+            margin-top: 20px;
+            background-color: var(--tl-white);
+            padding: 20px;
+            border-radius: 16px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(11, 37, 69, 0.05);
+            border-left: 5px solid var(--tl-orange); /* Оранжевый акцент */
+            color: var(--tl-dark);
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Стили для выделения текста в плане */
+        b { color: var(--tl-dark); }
+        
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>🎾 TIME LIFE</h2>
+        <p class="subtitle">Ваш персональный помощник для организации занятий</p>
+    </div>
+
+    <div class="card">
+        <label>Сколько у Вас свободного времени? (в минутах)</label>
+        <input type="number" id="timeInput" placeholder="Например: 60" min="15" max="180">
+    </div>
+
+    <div class="card">
+        <label>На каком уроке Вы остановились?</label>
+        <select id="lessonSelect">
+            <option value="Накат слева">Накат слева</option>
+            <option value="Накат справа">Накат справа</option>
+            <option value="Подрезка">Подрезка</option>
+            <option value="Топ-спин. Часть 1">Топ-спин. Часть 1</option>
+            <option value="Топ-спин. Часть 2">Топ-спин. Часть 2</option>
+        </select>
+    </div>
+
+    <button onclick="generatePlan()">Составить план занятия</button>
+
+    <div id="result"></div>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем на весь экран
+
+        // Устанавливаем цвет шапки телеграма под наш фон
+        tg.setHeaderColor('#FCF9F2');
+        tg.setBackgroundColor('#FCF9F2');
+
+        function generatePlan() {
+            const time = parseInt(document.getElementById('timeInput').value);
+            const lesson = document.getElementById('lessonSelect').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!time || time < 15) {
+                tg.showAlert("Пожалуйста, укажите время (минимум 15 минут).");
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = "⏳ <i>Менеджер готовит Ваш план...</i>";
+
+            // Отправляем данные в Cloudflare Worker для генерации
+            fetch('https://tennis-support-chat.andrewfrolov052.workers.dev/webapp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ time: time, lesson: lesson })
+            })
+            .then(res => res.json())
+            .then(data => {
+                resultDiv.innerHTML = data.plan;
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            })
+            .catch(err => {
+                resultDiv.innerHTML = "❌ Ошибка соединения. Попробуйте позже.";
+            });
+        }
+    </script>
+</body>
+</html>
